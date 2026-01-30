@@ -144,16 +144,6 @@ graveyard/
 
 ---
 
-## Taglines
-
-- "Don't get attached."
-- "Calculating your Takeout Tax since 2024"
-- "Part obituary, part invoice"
-- "Google Hospice: We'll tell you when it's time"
-- "The only Google product that tracks Google products dying"
-
----
-
 ## Data Sources
 
 - [killedbygoogle.com](https://killedbygoogle.com) - 290+ dead Google products

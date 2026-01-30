@@ -9,7 +9,7 @@
   <!-- OG Tags -->
   <meta property="og:title" content="Takeout Tax Calculator 💀">
   <meta property="og:description" content="I've paid $650 in Takeout Tax. Calculate yours.">
-  <meta property="og:url" content="https://takeouttax.com">
+  <meta property="og:url" content="https://anupamchugh.github.io/google-takeout-tax">
   <meta name="twitter:card" content="summary_large_image">
 
   <style>
@@ -462,8 +462,8 @@
       <p style="font-size: 1.2rem; margin-bottom: 1rem;">"Part obituary, part invoice." 💀</p>
 
       <div class="footer-links">
-        <a href="https://github.com/anupamchugh/takeout-tax">⭐ GitHub (Fork me!)</a>
-        <a href="https://github.com/anupamchugh/takeout-tax">CLI: npx takeout-tax</a>
+        <a href="https://github.com/anupamchugh/google-takeout-tax">⭐ GitHub (Fork me!)</a>
+        <a href="https://github.com/anupamchugh/google-takeout-tax">CLI: npx takeout-tax</a>
         <a href="https://killedbygoogle.com">Data: killedbygoogle.com</a>
         <a href="https://takeout.google.com">Get Your Takeout</a>
       </div>
@@ -472,6 +472,13 @@
         Google Hospice: We'll tell you when it's time.<br>
         <em>The only Google product that tracks Google products dying.</em>
       </p>
+
+      <div class="irony-box" style="margin-top: 2rem; border-color: var(--accent);">
+        <strong style="color: var(--accent);">Meanwhile, in Cupertino...</strong>
+        <code style="color: var(--accent);">iOS 26 encrypts your visited places on-device.</code>
+        <code style="color: var(--text-muted);">Your location history. Yours alone.</code>
+        <code style="color: var(--text-muted);">No Takeout needed when there's nothing to take out. 🍎</code>
+      </div>
     </footer>
   </div>
 
@@ -815,8 +822,8 @@ ${products.map(p => `│    ❌ ${p.name.padEnd(30)} (${p.year})           │`)
 
 You've been "Googled" ${selected.length} time${selected.length > 1 ? 's' : ''}.
 
-Calculate yours → https://takeouttax.com
-Fork on GitHub → https://github.com/anupamchugh/takeout-tax
+Calculate yours → https://anupamchugh.github.io/google-takeout-tax
+Fork on GitHub → https://github.com/anupamchugh/google-takeout-tax
       `.trim();
 
       document.getElementById('invoice').textContent = invoice;
@@ -908,7 +915,7 @@ Fork on GitHub → https://github.com/anupamchugh/takeout-tax
       const cost = Math.round(hours * rate);
 
       const text = encodeURIComponent(
-        `I've paid $${cost} in Takeout Tax from Google killing ${selected.length} products I used.\n\nCalculate yours: https://takeouttax.com\n\n💀 Don't get attached.`
+        `I've paid $${cost} in Takeout Tax from Google killing ${selected.length} products I used.\n\nCalculate yours: https://anupamchugh.github.io/google-takeout-tax\n\n💀 Don't get attached.`
       );
       window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
     }

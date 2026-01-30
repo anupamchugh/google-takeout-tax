@@ -4,6 +4,14 @@ node_modules/
 .env
 .env.local
 dist/
+package-lock.json
+
+# Compiled output
+*.js
+*.js.map
+*.d.ts
+*.d.ts.map
+!index.html
 
 # Specs (local only)
 SPEC.md

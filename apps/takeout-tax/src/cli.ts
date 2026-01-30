@@ -398,8 +398,8 @@ function printReport(report: TaxReport): void {
   }
 
   // Call to action
-  console.log(`Share your results: https://takeouttax.com`);
-  console.log(`Source: https://github.com/anupamchugh/takeout-tax`);
+  console.log(`Share your results: https://anupamchugh.github.io/google-takeout-tax`);
+  console.log(`Source: https://github.com/anupamchugh/google-takeout-tax`);
   console.log('');
 }
 
@@ -456,7 +456,7 @@ How to get your Takeout data:
   4. Download and extract the ZIP
   5. Run this tool on the extracted folder
 
-Learn more: https://github.com/anupamchugh/takeout-tax
+Learn more: https://github.com/anupamchugh/google-takeout-tax
 `);
 }
 

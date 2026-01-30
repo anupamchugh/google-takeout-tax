@@ -75,9 +75,11 @@ npx takeout-tax ~/Downloads/Takeout --json
 ### Get Your Takeout Data
 
 1. Go to [takeout.google.com](https://takeout.google.com)
-2. Click **"Deselect all"** then **"Select all"**
+2. Select **Maps** + **Timeline** (we don't need Location History!)
 3. Create export → Download ZIP → Extract
 4. Run the CLI on the extracted folder
+
+> **Note:** Most people don't have Location History enabled (it's opt-in and creepy). We extract location data from your **Maps labelled places** and **commute routes** instead. See [WHERE_I_WAS_SPEC.md](./WHERE_I_WAS_SPEC.md) for details.
 
 [Full CLI docs →](./apps/takeout-tax/README.md)
 
@@ -172,7 +174,7 @@ The tools only read folder names and file metadata (count, size, dates). They do
 
 ```bash
 # Clone
-git clone https://github.com/anupamchugh/graveyard
+git clone https://github.com/anupamchugh/google-takeout-tax
 cd graveyard
 
 # Install

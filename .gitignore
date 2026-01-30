@@ -4,3 +4,9 @@ node_modules/
 .env
 .env.local
 dist/
+
+# Specs (local only)
+SPEC.md
+TAKEOUT_MCP_SPEC.md
+WHERE_I_WAS_SPEC.md
+takeout-mcp-spec.md

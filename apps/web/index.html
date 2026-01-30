@@ -572,15 +572,39 @@
 
     let takeoutData = null;
 
+    // Check if File System Access API is supported
+    const hasFileSystemAPI = 'showDirectoryPicker' in window;
+
     async function selectFolder() {
+      if (!hasFileSystemAPI) {
+        alert('Folder selection requires Chrome or Edge browser.\n\nFor Safari/Firefox: Use the manual product selection below, or use our CLI:\n\nnpx takeout-tax ~/Downloads/Takeout');
+        return;
+      }
+
       try {
         const dirHandle = await window.showDirectoryPicker();
         await parseTakeout(dirHandle);
       } catch (e) {
         if (e.name !== 'AbortError') {
-          alert('Could not access folder. Make sure to select your Takeout folder.');
+          alert('Could not access folder.\n\nTry:\n1. Use Chrome or Edge browser\n2. Select the Takeout folder directly\n3. Or use manual selection below');
         }
       }
+    }
+
+    // Update dropzone text based on browser support
+    if (!hasFileSystemAPI) {
+      document.querySelectorAll('.dropzone').forEach(dz => {
+        dz.innerHTML = `
+          <div class="dropzone-icon">⚠️</div>
+          <p class="dropzone-text">
+            Folder upload requires <strong>Chrome or Edge</strong><br>
+            <small>Use manual selection below, or CLI: npx takeout-tax</small>
+          </p>
+          <div class="dropzone-privacy">🔒 All processing is 100% local</div>
+        `;
+        dz.style.cursor = 'default';
+        dz.onclick = () => alert('Folder selection requires Chrome or Edge.\n\nUse the manual product selection below!');
+      });
     }
 
     async function parseTakeout(dirHandle) {

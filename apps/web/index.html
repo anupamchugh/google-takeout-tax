@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Takeout Tax - Calculate Your Google Migration Costs</title>
+  <meta name="description" content="How much has Google cost you by killing products? Calculate your personal Takeout Tax.">
+
+  <!-- OG Tags -->
+  <meta property="og:title" content="Takeout Tax Calculator 💀">
+  <meta property="og:description" content="I've paid $650 in Takeout Tax. Calculate yours.">
+  <meta property="og:url" content="https://takeouttax.com">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card-bg: #111;
+      --border: #222;
+      --text: #e0e0e0;
+      --text-muted: #666;
+      --accent: #00ff88;
+      --danger: #ff4444;
+      --warning: #ffaa00;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero .skull { font-size: 4rem; display: block; margin-bottom: 1rem; }
+    .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .hero .tagline { color: var(--text-muted); font-size: 1.1rem; }
+
+    /* Punchlines */
+    .punchline {
+      background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+      text-align: center;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .punchline .story { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .punchline .location { color: var(--accent); }
+    .punchline .product { color: var(--danger); }
+    .punchline .meta { color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem; }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin: 2rem 0 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      padding: 1rem 2rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-bottom: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active {
+      background: var(--card-bg);
+      color: var(--accent);
+      border-color: var(--border);
+      border-radius: 8px 8px 0 0;
+      margin-bottom: -1px;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Dropzone */
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 3rem;
+      text-align: center;
+      margin: 1.5rem 0;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent);
+      background: rgba(0, 255, 136, 0.05);
+    }
+    .dropzone-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .dropzone-text { color: var(--text-muted); }
+    .dropzone-text strong { color: var(--accent); }
+    .dropzone-privacy {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: rgba(0, 255, 136, 0.1);
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: var(--accent);
+      display: inline-block;
+    }
+
+    /* Calculator */
+    .calculator {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 0 8px 8px 8px;
+      padding: 2rem;
+    }
+
+    .section-title {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin: 1.5rem 0 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Product Grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.5rem;
+    }
+    .product-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+    }
+    .product-item:hover { border-color: var(--accent); }
+    .product-item.selected {
+      background: rgba(0, 255, 136, 0.1);
+      border-color: var(--accent);
+    }
+    .product-item input { display: none; }
+    .product-item .checkbox {
+      width: 16px; height: 16px;
+      border: 2px solid var(--border);
+      border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .product-item.selected .checkbox {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .product-item.selected .checkbox::after {
+      content: '✓'; color: var(--bg); font-size: 10px;
+    }
+    .product-name { flex: 1; }
+    .product-year { color: var(--text-muted); font-size: 0.7rem; }
+
+    /* Rate Input */
+    .rate-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+    .rate-row label { color: var(--text-muted); }
+    .rate-row input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      padding: 0.5rem;
+      font-family: inherit;
+      width: 80px;
+    }
+    .rate-row input:focus { outline: none; border-color: var(--accent); }
+
+    /* Buttons */
+    .btn {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 1rem 2rem;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3);
+    }
+    .btn-full { width: 100%; margin-top: 1.5rem; }
+    .btn-secondary {
+      background: var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      background: var(--text-muted);
+      box-shadow: none;
+    }
+
+    /* Results */
+    .results {
+      display: none;
+      margin: 2rem 0;
+    }
+    .results.show { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Invoice */
+    .invoice-container {
+      background: var(--card-bg);
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 2rem;
+    }
+    .invoice-container h2 { text-align: center; margin-bottom: 1.5rem; }
+    .invoice {
+      font-family: 'SF Mono', monospace;
+      background: var(--bg);
+      padding: 1.5rem;
+      border-radius: 4px;
+      white-space: pre;
+      overflow-x: auto;
+      font-size: 0.8rem;
+      line-height: 1.3;
+    }
+
+    /* Timeline */
+    .timeline-container {
+      background: var(--card-bg);
+      border: 2px solid var(--warning);
+      border-radius: 8px;
+      padding: 2rem;
+      margin-top: 1.5rem;
+    }
+    .timeline-container h2 { text-align: center; margin-bottom: 1.5rem; }
+    .timeline {
+      font-family: 'SF Mono', monospace;
+      background: var(--bg);
+      padding: 1.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+    .timeline .location-line { color: var(--accent); }
+    .timeline .death-line { color: var(--danger); }
+    .timeline .date { color: var(--text-muted); }
+
+    /* Share */
+    .share-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      border-radius: 8px;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-value { font-size: 1.8rem; color: var(--accent); display: block; }
+    .stat-label { color: var(--text-muted); font-size: 0.75rem; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 0;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+    .irony-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 2rem auto;
+      max-width: 600px;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+    .irony-box code {
+      display: block;
+      color: var(--text-muted);
+      margin: 0.25rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Hero -->
+    <header class="hero">
+      <span class="skull">💀</span>
+      <h1>Takeout Tax</h1>
+      <p class="tagline">Calculate how much Google has cost you by killing products.</p>
+    </header>
+
+    <!-- Rotating Punchlines -->
+    <section class="punchline" id="punchline">
+      <div class="story">
+        While you were in <span class="location">Da Nang, Vietnam</span>...<br>
+        Google killed <span class="product">Hangouts</span>.
+      </div>
+      <div class="meta">"Don't get attached."</div>
+    </section>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-value">290+</span>
+        <span class="stat-label">Products Killed</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">Since 2006</span>
+        <span class="stat-label">The Graveyard Grows</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="userTax">$???</span>
+        <span class="stat-label">Your Tax</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('calculator')">💰 Calculate Tax</button>
+      <button class="tab" onclick="switchTab('timeline')">🗺️ Your Journey</button>
+    </div>
+
+    <!-- Tab: Calculator -->
+    <div id="tab-calculator" class="tab-content active">
+      <div class="calculator">
+        <!-- Dropzone -->
+        <div class="dropzone" id="dropzone" onclick="selectFolder()">
+          <div class="dropzone-icon">📁</div>
+          <p class="dropzone-text">
+            <strong>Click to select</strong> your Google Takeout folder<br>
+            <small>or drag & drop here</small>
+          </p>
+          <div class="dropzone-privacy">🔒 100% local - your data never leaves your device</div>
+        </div>
+
+        <div style="text-align: center; color: var(--text-muted); margin: 1rem 0;">— or select manually —</div>
+
+        <!-- Product Selection -->
+        <p class="section-title">Which killed products did you use?</p>
+        <div class="product-grid" id="productGrid"></div>
+
+        <!-- Rate -->
+        <div class="rate-row">
+          <label>Your hourly rate:</label>
+          <span>$</span>
+          <input type="number" id="rate" value="50" min="1">
+          <span>/hr</span>
+          <span style="color: var(--text-muted); font-size: 0.8rem; margin-left: auto;">
+            (for opportunity cost calculation)
+          </span>
+        </div>
+
+        <button class="btn btn-full" onclick="calculate()">
+          Calculate My Takeout Tax →
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab: Timeline -->
+    <div id="tab-timeline" class="tab-content">
+      <div class="calculator">
+        <div class="dropzone" id="dropzone2" onclick="selectFolder()">
+          <div class="dropzone-icon">🗺️</div>
+          <p class="dropzone-text">
+            <strong>Select your Takeout folder</strong> to generate your journey<br>
+            <small>See where you were when each product died</small>
+          </p>
+          <div class="dropzone-privacy">🔒 100% local processing</div>
+        </div>
+
+        <div id="timeline-placeholder" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+          Upload your Takeout to see your personalized journey timeline
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results" id="results">
+      <!-- Invoice -->
+      <div class="invoice-container">
+        <h2>💀 Your Takeout Tax Invoice</h2>
+        <div class="invoice" id="invoice"></div>
+        <div class="share-buttons">
+          <button class="btn btn-secondary" onclick="copyInvoice()">📋 Copy</button>
+          <button class="btn btn-secondary" onclick="shareTwitter()">𝕏 Share</button>
+          <button class="btn btn-secondary" onclick="downloadInvoice()">📷 Download</button>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline-container" id="timelineContainer" style="display: none;">
+        <h2>🪦 Your Google Journey</h2>
+        <div class="timeline" id="timelineOutput"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <!-- The Irony -->
+      <div class="irony-box">
+        <strong>The irony that writes itself:</strong>
+        <code>2023-11 → Google launches "Notes on Search"</code>
+        <code>2024-07 → Google kills Notes on Search</code>
+        <code>2024-07 → Users told to export via Takeout</code>
+        <code>2025-01 → We build tool to find dead products in Takeout</code>
+        <code style="color: var(--accent);">         ...meta.</code>
+      </div>
+
+      <p style="font-size: 1.2rem; margin-bottom: 1rem;">"Part obituary, part invoice." 💀</p>
+
+      <div class="footer-links">
+        <a href="https://github.com/anupamchugh/takeout-tax">⭐ GitHub (Fork me!)</a>
+        <a href="https://github.com/anupamchugh/takeout-tax">CLI: npx takeout-tax</a>
+        <a href="https://killedbygoogle.com">Data: killedbygoogle.com</a>
+        <a href="https://takeout.google.com">Get Your Takeout</a>
+      </div>
+
+      <p style="margin-top: 2rem; font-size: 0.8rem;">
+        Google Hospice: We'll tell you when it's time.<br>
+        <em>The only Google product that tracks Google products dying.</em>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════════
+    // DATA
+    // ═══════════════════════════════════════════════════════════════════
+
+    const PRODUCTS = [
+      { name: 'Google Reader', year: 2013, hours: 2, risk: 'low', folder: 'Reader' },
+      { name: 'Google+', year: 2019, hours: 2, risk: 'high', folder: 'Google+ Stream' },
+      { name: 'Inbox by Gmail', year: 2019, hours: 1, risk: 'low', folder: 'Inbox' },
+      { name: 'Google Play Music', year: 2020, hours: 3, risk: 'medium', folder: 'Google Play Music' },
+      { name: 'Google Hangouts', year: 2022, hours: 1.5, risk: 'medium', folder: 'Hangouts' },
+      { name: 'Google Podcasts', year: 2024, hours: 0.5, risk: 'low', folder: 'Google Podcasts' },
+      { name: 'Google Stadia', year: 2023, hours: 0, risk: 'high', folder: 'Stadia' },
+      { name: 'Notes on Search', year: 2024, hours: 0.5, risk: 'high', folder: 'Notes' },
+      { name: 'Google Allo', year: 2019, hours: 1, risk: 'high', folder: 'Google Allo' },
+      { name: 'Google Wave', year: 2012, hours: 1, risk: 'high', folder: 'Wave' },
+      { name: 'Google Bookmarks', year: 2021, hours: 0.5, risk: 'low', folder: 'Bookmarks' },
+      { name: 'Picasa', year: 2016, hours: 2, risk: 'low', folder: 'Picasa' },
+      { name: 'Google Trips', year: 2019, hours: 0.5, risk: 'medium', folder: 'Trips' },
+      { name: 'Google Domains', year: 2023, hours: 1, risk: 'low', folder: null },
+    ];
+
+    const PUNCHLINES = [
+      { location: 'Da Nang, Vietnam', product: 'Hangouts', tagline: '"Don\'t get attached."' },
+      { location: 'Bangalore, India', product: 'Play Music', tagline: '"Calculating your Takeout Tax since 2024"' },
+      { location: 'San Francisco', product: 'Reader', tagline: '"Part obituary, part invoice."' },
+      { location: 'Tokyo, Japan', product: 'Inbox', tagline: '"Google Hospice: We\'ll tell you when it\'s time."' },
+      { location: 'Singapore', product: 'Podcasts', tagline: '"Export early, export often."' },
+      { location: 'Berlin, Germany', product: 'Stadia', tagline: '"The future of gaming (2019-2023)"' },
+      { location: 'your home', product: 'Google+', tagline: '"The social network nobody asked for, everyone got."' },
+    ];
+
+    const LOCATION_BOUNDS = {
+      'Da Nang, Vietnam': { lat: [15, 17], lng: [107, 109], emoji: '🇻🇳' },
+      'Singapore': { lat: [1.2, 1.5], lng: [103.6, 104], emoji: '🇸🇬' },
+      'Bangalore, India': { lat: [12.5, 13.5], lng: [77, 78], emoji: '🇮🇳' },
+      'Indore, India': { lat: [22, 23], lng: [75, 76.5], emoji: '🇮🇳' },
+      'Goa, India': { lat: [15, 16], lng: [73, 74.5], emoji: '🇮🇳' },
+      'Kerala, India': { lat: [8, 12], lng: [75, 77], emoji: '🇮🇳' },
+      'Delhi NCR, India': { lat: [28, 29], lng: [76.5, 77.5], emoji: '🇮🇳' },
+    };
+
+    // ═══════════════════════════════════════════════════════════════════
+    // UI SETUP
+    // ═══════════════════════════════════════════════════════════════════
+
+    // Populate product grid
+    const grid = document.getElementById('productGrid');
+    PRODUCTS.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'product-item';
+      div.dataset.index = i;
+      div.innerHTML = `
+        <input type="checkbox" id="p${i}">
+        <div class="checkbox"></div>
+        <span class="product-name">${p.name}</span>
+        <span class="product-year">${p.year}</span>
+      `;
+      div.onclick = () => toggleProduct(div, i);
+      grid.appendChild(div);
+    });
+
+    function toggleProduct(div, index) {
+      const cb = div.querySelector('input');
+      cb.checked = !cb.checked;
+      div.classList.toggle('selected', cb.checked);
+    }
+
+    // Rotate punchlines
+    let punchlineIndex = 0;
+    function rotatePunchline() {
+      const p = PUNCHLINES[punchlineIndex];
+      document.getElementById('punchline').innerHTML = `
+        <div class="story">
+          While you were in <span class="location">${p.location}</span>...<br>
+          Google killed <span class="product">${p.product}</span>.
+        </div>
+        <div class="meta">${p.tagline}</div>
+      `;
+      punchlineIndex = (punchlineIndex + 1) % PUNCHLINES.length;
+    }
+    setInterval(rotatePunchline, 4000);
+
+    // Tab switching
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+      document.getElementById(`tab-${tab}`).classList.add('active');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // FILE SYSTEM ACCESS API
+    // ═══════════════════════════════════════════════════════════════════
+
+    let takeoutData = null;
+
+    async function selectFolder() {
+      try {
+        const dirHandle = await window.showDirectoryPicker();
+        await parseTakeout(dirHandle);
+      } catch (e) {
+        if (e.name !== 'AbortError') {
+          alert('Could not access folder. Make sure to select your Takeout folder.');
+        }
+      }
+    }
+
+    async function parseTakeout(dirHandle) {
+      takeoutData = {
+        folders: [],
+        locations: [],
+        accountCreated: null,
+        deadProducts: [],
+      };
+
+      // Scan top-level folders
+      for await (const entry of dirHandle.values()) {
+        if (entry.kind === 'directory') {
+          takeoutData.folders.push(entry.name);
+
+          // Check for dead products
+          const product = PRODUCTS.find(p =>
+            p.folder && entry.name.toLowerCase().includes(p.folder.toLowerCase())
+          );
+          if (product) {
+            takeoutData.deadProducts.push(product);
+            // Auto-select in UI
+            const items = document.querySelectorAll('.product-item');
+            items.forEach(item => {
+              if (PRODUCTS[item.dataset.index].name === product.name) {
+                item.classList.add('selected');
+                item.querySelector('input').checked = true;
+              }
+            });
+          }
+
+          // Parse Maps data
+          if (entry.name === 'Maps') {
+            await parseMapsFolder(entry);
+          }
+
+          // Parse Timeline settings
+          if (entry.name === 'Timeline') {
+            await parseTimelineFolder(entry);
+          }
+        }
+      }
+
+      updateUIWithTakeout();
+    }
+
+    async function parseMapsFolder(mapsHandle) {
+      for await (const entry of mapsHandle.values()) {
+        if (entry.kind === 'directory' && entry.name === 'My labelled places') {
+          for await (const file of entry.values()) {
+            if (file.name === 'Labelled places.json') {
+              const f = await file.getFile();
+              const text = await f.text();
+              try {
+                const data = JSON.parse(text);
+                for (const feature of data.features || []) {
+                  if (feature.geometry?.coordinates) {
+                    const [lng, lat] = feature.geometry.coordinates;
+                    if (lat !== 0 && lng !== 0) {
+                      takeoutData.locations.push({
+                        name: feature.properties?.name || identifyLocation(lat, lng),
+                        lat, lng,
+                        emoji: getLocationEmoji(lat, lng),
+                      });
+                    }
+                  }
+                }
+              } catch {}
+            }
+          }
+        }
+        if (entry.kind === 'directory' && entry.name === 'Commute routes') {
+          for await (const file of entry.values()) {
+            if (file.name === 'Commute routes.json') {
+              const f = await file.getFile();
+              const text = await f.text();
+              try {
+                const data = JSON.parse(text);
+                for (const trip of data.trips || []) {
+                  for (const visit of trip.place_visit || []) {
+                    if (visit.place?.lat_lng) {
+                      const lat = visit.place.lat_lng.latitude;
+                      const lng = visit.place.lat_lng.longitude;
+                      const name = identifyLocation(lat, lng);
+                      if (!takeoutData.locations.some(l => l.name === name)) {
+                        takeoutData.locations.push({
+                          name, lat, lng,
+                          emoji: getLocationEmoji(lat, lng),
+                        });
+                      }
+                    }
+                  }
+                }
+              } catch {}
+            }
+          }
+        }
+      }
+    }
+
+    async function parseTimelineFolder(timelineHandle) {
+      for await (const entry of timelineHandle.values()) {
+        if (entry.name === 'Settings.json') {
+          const f = await entry.getFile();
+          const text = await f.text();
+          try {
+            const data = JSON.parse(text);
+            if (data.createdTime) {
+              takeoutData.accountCreated = new Date(data.createdTime);
+            }
+          } catch {}
+        }
+      }
+    }
+
+    function identifyLocation(lat, lng) {
+      for (const [name, bounds] of Object.entries(LOCATION_BOUNDS)) {
+        if (lat >= bounds.lat[0] && lat <= bounds.lat[1] &&
+            lng >= bounds.lng[0] && lng <= bounds.lng[1]) {
+          return name;
+        }
+      }
+      return `Location (${lat.toFixed(1)}°, ${lng.toFixed(1)}°)`;
+    }
+
+    function getLocationEmoji(lat, lng) {
+      for (const [name, bounds] of Object.entries(LOCATION_BOUNDS)) {
+        if (lat >= bounds.lat[0] && lat <= bounds.lat[1] &&
+            lng >= bounds.lng[0] && lng <= bounds.lng[1]) {
+          return bounds.emoji;
+        }
+      }
+      return '📍';
+    }
+
+    function updateUIWithTakeout() {
+      if (!takeoutData) return;
+
+      // Update dropzone
+      const msg = `Found ${takeoutData.folders.length} folders, ${takeoutData.locations.length} locations`;
+      document.querySelectorAll('.dropzone').forEach(dz => {
+        dz.innerHTML = `
+          <div class="dropzone-icon">✅</div>
+          <p class="dropzone-text"><strong>Takeout loaded!</strong><br>${msg}</p>
+        `;
+      });
+
+      // Show timeline
+      if (takeoutData.locations.length > 0) {
+        document.getElementById('timeline-placeholder').style.display = 'none';
+        generateTimeline();
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CALCULATE TAX
+    // ═══════════════════════════════════════════════════════════════════
+
+    function calculate() {
+      const rate = parseInt(document.getElementById('rate').value) || 50;
+      const selected = document.querySelectorAll('.product-item.selected');
+
+      if (selected.length === 0) {
+        alert('Select at least one product you used!');
+        return;
+      }
+
+      let totalHours = 0;
+      let highRisk = 0;
+      const products = [];
+
+      selected.forEach(item => {
+        const p = PRODUCTS[item.dataset.index];
+        totalHours += p.hours;
+        if (p.risk === 'high') highRisk++;
+        products.push({ name: p.name, year: p.year, hours: p.hours, risk: p.risk });
+      });
+
+      const cost = Math.round(totalHours * rate);
+      const riskPercent = Math.round((highRisk / selected.length) * 100);
+
+      // Update stat
+      document.getElementById('userTax').textContent = `$${cost.toLocaleString()}`;
+
+      // Generate invoice
+      const accountAge = takeoutData?.accountCreated
+        ? takeoutData.accountCreated.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+        : 'Unknown';
+
+      const invoice = `
+┌────────────────────────────────────────────────────────────┐
+│              💀 TAKEOUT TAX INVOICE 💀                     │
+├────────────────────────────────────────────────────────────┤
+│  Account:          ${accountAge.padEnd(38)}│
+│  Products Lost:    ${selected.length.toString().padEnd(38)}│
+│  Hourly Rate:      $${rate.toString().padEnd(37)}│
+├────────────────────────────────────────────────────────────┤
+│  DEAD PRODUCTS:                                            │
+${products.map(p => `│    ❌ ${p.name.padEnd(30)} (${p.year})           │`).join('\n')}
+├────────────────────────────────────────────────────────────┤
+│  YOUR TAKEOUT TAX:                                         │
+│                                                            │
+│    ⏱️  Migration Hours:     ${totalHours.toString().padEnd(28)}│
+│    💰 Opportunity Cost:    $${cost.toLocaleString().padEnd(27)}│
+│    ⚠️  High Risk Data:      ${(riskPercent + '%').padEnd(28)}│
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+
+You've been "Googled" ${selected.length} time${selected.length > 1 ? 's' : ''}.
+
+Calculate yours → https://takeouttax.com
+Fork on GitHub → https://github.com/anupamchugh/takeout-tax
+      `.trim();
+
+      document.getElementById('invoice').textContent = invoice;
+      document.getElementById('results').classList.add('show');
+
+      // Generate timeline if we have location data
+      if (takeoutData?.locations.length > 0) {
+        generateTimeline();
+        document.getElementById('timelineContainer').style.display = 'block';
+      }
+
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // TIMELINE
+    // ═══════════════════════════════════════════════════════════════════
+
+    function generateTimeline() {
+      if (!takeoutData) return;
+
+      const deaths = PRODUCTS.filter(p => {
+        const item = document.querySelector(`.product-item[data-index="${PRODUCTS.indexOf(p)}"]`);
+        return item?.classList.contains('selected');
+      }).map(p => ({
+        name: p.name,
+        date: new Date(`${p.year}-06-01`),
+        year: p.year,
+      })).sort((a, b) => a.date - b.date);
+
+      const locations = takeoutData.locations.slice(0, 8); // Limit for display
+      const accountStart = takeoutData.accountCreated || new Date('2013-01-01');
+
+      // Build interleaved timeline
+      let html = '';
+
+      // Account start
+      html += `<div class="location-line">🎂 ${accountStart.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - Account Created</div>`;
+      html += `<div style="color: var(--text-muted)">│</div>`;
+
+      // Distribute locations across the timeline
+      const timeSpan = Date.now() - accountStart.getTime();
+      const locationsWithDates = locations.map((loc, i) => ({
+        ...loc,
+        estimatedDate: new Date(accountStart.getTime() + (timeSpan * (i + 1)) / (locations.length + 1)),
+      }));
+
+      // Merge and sort
+      const allEvents = [
+        ...locationsWithDates.map(l => ({ type: 'location', ...l })),
+        ...deaths.map(d => ({ type: 'death', ...d })),
+      ].sort((a, b) => (a.estimatedDate || a.date) - (b.estimatedDate || b.date));
+
+      let lastType = 'location';
+      for (const event of allEvents) {
+        if (event.type === 'location') {
+          if (lastType === 'death') {
+            html += `<div style="color: var(--text-muted)">│</div>`;
+          }
+          html += `<div class="location-line">${event.emoji} ${event.name}</div>`;
+          html += `<div class="date">   ~${event.estimatedDate.getFullYear()}</div>`;
+          html += `<div style="color: var(--text-muted)">│</div>`;
+        } else {
+          html += `<div class="death-line">├── 💀 ${event.name} <span class="date">(${event.year})</span></div>`;
+        }
+        lastType = event.type;
+      }
+
+      html += `<div style="color: var(--text-muted)">│</div>`;
+      html += `<div class="location-line">📍 Present Day</div>`;
+
+      document.getElementById('timelineOutput').innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // SHARING
+    // ═══════════════════════════════════════════════════════════════════
+
+    function copyInvoice() {
+      navigator.clipboard.writeText(document.getElementById('invoice').textContent);
+      alert('Copied to clipboard!');
+    }
+
+    function shareTwitter() {
+      const selected = document.querySelectorAll('.product-item.selected');
+      const rate = parseInt(document.getElementById('rate').value) || 50;
+      let hours = 0;
+      selected.forEach(item => hours += PRODUCTS[item.dataset.index].hours);
+      const cost = Math.round(hours * rate);
+
+      const text = encodeURIComponent(
+        `I've paid $${cost} in Takeout Tax from Google killing ${selected.length} products I used.\n\nCalculate yours: https://takeouttax.com\n\n💀 Don't get attached.`
+      );
+      window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+    }
+
+    function downloadInvoice() {
+      // Create downloadable text file
+      const text = document.getElementById('invoice').textContent;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'takeout-tax-invoice.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Drag & drop
+    document.querySelectorAll('.dropzone').forEach(dz => {
+      dz.ondragover = (e) => { e.preventDefault(); dz.classList.add('dragover'); };
+      dz.ondragleave = () => dz.classList.remove('dragover');
+      dz.ondrop = (e) => { e.preventDefault(); dz.classList.remove('dragover'); selectFolder(); };
+    });
+  </script>
+</body>
+</html>

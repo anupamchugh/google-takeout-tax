@@ -1,0 +1,13 @@
+{
+  "name": "graveyard-cli",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "tsx index.ts"
+  },
+  "dependencies": {
+    "@graveyard/correlation": "*",
+    "@graveyard/takeout": "*",
+    "@graveyard/types": "*"
+  }
+}

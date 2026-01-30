@@ -1,0 +1,36 @@
+{
+  "name": "takeout-tax",
+  "version": "1.0.0",
+  "description": "Calculate how much Google has cost you by killing products you used",
+  "bin": {
+    "takeout-tax": "./dist/cli.js"
+  },
+  "main": "dist/cli.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js"
+  },
+  "keywords": [
+    "google",
+    "takeout",
+    "graveyard",
+    "killed-by-google",
+    "migration",
+    "cli"
+  ],
+  "author": "Anupam Chugh",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anupamchugh/takeout-tax"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@graveyard/correlation",
+  "version": "0.1.0",
+  "main": "src/index.ts",
+  "private": true,
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@graveyard/types": "*",
+    "@graveyard/takeout": "*"
+  }
+}

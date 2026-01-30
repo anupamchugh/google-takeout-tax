@@ -1,0 +1,25 @@
+{
+  "name": "graveyard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Where I Was: Map your location history against tech service deaths",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "seed": "tsx scripts/seed-data.ts",
+    "cli": "tsx apps/cli/index.ts"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "turbo": "^1.10.16",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
+}

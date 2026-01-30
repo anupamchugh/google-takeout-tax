@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020"],
+    "moduleResolution": "node",
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@graveyard/db": ["packages/db/src/index.ts"],
+      "@graveyard/takeout": ["packages/takeout-parser/src/index.ts"],
+      "@graveyard/correlation": ["packages/correlation/src/index.ts"],
+      "@graveyard/types": ["packages/types/src/index.ts"]
+    }
+  }
+}

@@ -2,6 +2,19 @@
 
 **Scraping and cataloging dead/killed tech services.**
 
+## 🚀 Status: SHIPPED
+
+| Component | Status | Link |
+|-----------|--------|------|
+| **Web App** | ✅ Live | https://anupamchugh.github.io/google-takeout-tax/ |
+| **GitHub Repo** | ✅ Public | https://github.com/anupamchugh/google-takeout-tax |
+| **CLI** | ✅ Working | `npx takeout-tax ~/Downloads/Takeout` |
+| **Timeline Generator** | ✅ Working | `packages/journey-mapper/` |
+| **MCP Server** | 📋 Spec'd | See `takeout-mcp-spec.md` |
+| **iOS App** | 📋 Spec'd | Phase 2 |
+
+**Shipped: January 30, 2025**
+
 ---
 
 ## The Parody That Writes Itself
